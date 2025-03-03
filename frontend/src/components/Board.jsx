@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { socket } from "../Socket";
 import { motion } from "framer-motion";
-import Confetti from "react-confetti";
 import { useWindowSize } from "react-use"; // Use the hook to get viewport dimensions
 import "./Board.css"; // Import the external CSS file
 
@@ -40,9 +39,6 @@ const Board = ({ room, name }) => {
 
   return (
     <div className="board-container">
-      {game.winner && game.winner === player && (
-        <Confetti width={width} height={height} />
-      )}
       <h2 className="room-id">Room ID: {room}</h2>
       <h3 className="game-status">
         {game.winner ? `Winner: ${game.winner}` : `Current Turn: ${game.turn}`}
@@ -67,7 +63,10 @@ const Board = ({ room, name }) => {
       </div>
 
       {game.winner && (
-        <h3
+        <motion.h3
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
           className={`text-3xl font-bold mt-6 p-3 rounded-lg shadow-lg ${
             game.winner === "Draw"
               ? "text-yellow-400 bg-gray-700"
@@ -81,12 +80,14 @@ const Board = ({ room, name }) => {
             : game.winner === player
             ? "You Win! 🎉"
             : "You Lost! 😢"}
-        </h3>
+        </motion.h3>
       )}
 
-      <button className="restart-button" onClick={handleRestart}>
-        Restart Game
-      </button>
+      {game.winner && (
+        <button className="restart-button" onClick={handleRestart}>
+          Restart Game
+        </button>
+      )}
 
       <p className="message">{message}</p>
       <div className="players-list">

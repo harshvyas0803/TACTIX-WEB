@@ -10,8 +10,8 @@ function App() {
     <div className="h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 bg-cover bg-fixed">
       {!joined ? (
         <div className="text-center text-white space-y-6 p-8 bg-gray-800 bg-opacity-70 rounded-lg shadow-xl w-80 sm:w-96 lg:w-1/3 transform transition-transform duration-500 hover:scale-105">
-          <h1 className="text-3xl font-bold text-blue-400 animate__animated animate__fadeIn">Welcome to Tic-Tac-Toe</h1>
-          <p className="text-gray-300">Play with friends in real-time!</p>
+          <h1 className="text-3xl font-bold text-blue-400 animate__animated animate__fadeIn">Welcome to TacTix</h1>
+          <p className="text-gray-300">Play Tic-Tac-Toe  with friends in real-time!</p>
 
           {/* Input fields with hover effect */}
           <input
