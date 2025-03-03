@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { socket } from "../Socket";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
-import { useWindowSize } from "react-use";
+import { useWindowSize } from "react-use";  // Ensure this import is here
 
 const Board = ({ room, name }) => {
-  const { width, height } = useWindowSize();
+  const { width, height } = useWindowSize();  // Use the hook to get the window size
   const [game, setGame] = useState({ board: Array(9).fill(null), turn: "X", winner: null });
   const [message, setMessage] = useState("");
   const [player, setPlayer] = useState(null);
@@ -39,7 +39,7 @@ const Board = ({ room, name }) => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white p-4">
-      {game.winner && game.winner !== "Draw" && <Confetti width={width} height={height} />} 
+      {game.winner && game.winner === player && <Confetti width={width} height={height} />}
       <h2 className="text-2xl font-bold mb-4 text-blue-400 drop-shadow-lg">Room ID: {room}</h2>
       <h3 className="text-lg font-semibold mb-2 text-yellow-300 drop-shadow-lg">
         {game.winner ? `Winner: ${game.winner}` : `Current Turn: ${game.turn}`}
