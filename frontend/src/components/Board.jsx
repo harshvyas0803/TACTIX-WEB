@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { socket } from "../Socket";
 import { motion } from "framer-motion";
 import Confetti from "react-confetti";
-import { useWindowSize } from "react-use";  // Ensure this import is here
+import { useWindowSize } from "react-use"; // Use the hook to get viewport dimensions
+import "./Board.css"; // Import the external CSS file
 
 const Board = ({ room, name }) => {
-  const { width, height } = useWindowSize();  // Use the hook to get the window size
+  const { width, height } = useWindowSize(); // Get dynamic viewport width & height
   const [game, setGame] = useState({ board: Array(9).fill(null), turn: "X", winner: null });
   const [message, setMessage] = useState("");
   const [player, setPlayer] = useState(null);
@@ -25,7 +26,7 @@ const Board = ({ room, name }) => {
       socket.off("playerJoined");
       socket.off("assignedPlayer");
     };
-  }, [room]);
+  }, [room, name]);
 
   const handleClick = (index) => {
     if (!game.winner && game.board[index] === null && game.turn === player) {
@@ -38,22 +39,27 @@ const Board = ({ room, name }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white p-4">
-      {game.winner && game.winner === player && <Confetti width={width} height={height} />}
-      <h2 className="text-2xl font-bold mb-4 text-blue-400 drop-shadow-lg">Room ID: {room}</h2>
-      <h3 className="text-lg font-semibold mb-2 text-yellow-300 drop-shadow-lg">
+    <div className="board-container">
+      {game.winner && game.winner === player && (
+        <Confetti width={width} height={height} />
+      )}
+      <h2 className="room-id">Room ID: {room}</h2>
+      <h3 className="game-status">
         {game.winner ? `Winner: ${game.winner}` : `Current Turn: ${game.turn}`}
       </h3>
-      <h3 className="text-lg font-semibold mb-2 text-green-300 drop-shadow-lg">You are: {player} ({name})</h3>
+      <h3 className="player-status">
+        You are: {player} ({name})
+      </h3>
 
-      <div className={`grid grid-cols-3 gap-4 w-72 sm:w-80 md:w-96 p-6 bg-gray-800 rounded-xl shadow-2xl border-2 border-gray-700 ${game.winner ? "pointer-events-none opacity-50" : ""}`}>
+      {/* Responsive Grid with Gap between Boxes */}
+      <div className={`grid-container ${game.winner ? "disabled" : ""}`}>
         {game.board.map((cell, index) => (
           <motion.button
             key={index}
             onClick={() => handleClick(index)}
             whileTap={{ scale: 0.9 }}
             animate={{ opacity: cell ? 1 : 0.6 }}
-            className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center text-5xl font-extrabold bg-gray-700 border border-gray-500 hover:bg-gray-600 rounded-lg shadow-lg transition-all duration-300 ease-in-out"
+            className={`grid-item ${cell === "X" ? "x" : cell === "O" ? "o" : ""}`}
           >
             {cell}
           </motion.button>
@@ -61,19 +67,31 @@ const Board = ({ room, name }) => {
       </div>
 
       {game.winner && (
-        <h3 className={`text-3xl font-bold mt-6 p-3 rounded-lg shadow-lg ${game.winner === "Draw" ? "text-yellow-400 bg-gray-700" : game.winner === player ? "text-green-400 bg-black" : "text-red-400 bg-gray-700"}`}>
-          {game.winner === "Draw" ? "It's a Draw!" : game.winner === player ? "You Win! 🎉" : "You Lost! 😢"}
+        <h3
+          className={`text-3xl font-bold mt-6 p-3 rounded-lg shadow-lg ${
+            game.winner === "Draw"
+              ? "text-yellow-400 bg-gray-700"
+              : game.winner === player
+              ? "text-green-400 bg-black"
+              : "text-red-400 bg-gray-700"
+          }`}
+        >
+          {game.winner === "Draw"
+            ? "It's a Draw!"
+            : game.winner === player
+            ? "You Win! 🎉"
+            : "You Lost! 😢"}
         </h3>
       )}
 
-      <button 
-        className="mt-4 px-4 py-2 bg-blue-500 text-white font-bold rounded-lg shadow-lg hover:bg-blue-600 transition"
-        onClick={handleRestart}>
+      <button className="restart-button" onClick={handleRestart}>
         Restart Game
       </button>
 
-      <p className="text-red-400 mt-3 text-lg">{message}</p>
-      <div className="mt-4 text-gray-300 text-sm text-center">Players in Room: {players.map((p) => `${p.name} (${p.symbol})`).join(", ")}</div>
+      <p className="message">{message}</p>
+      <div className="players-list">
+        Players in Room: {players.map((p) => `${p.name} (${p.symbol})`).join(", ")}
+      </div>
     </div>
   );
 };
